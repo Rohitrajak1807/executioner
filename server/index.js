@@ -1,14 +1,11 @@
-const {HOST, PORT} = require('./utils/env')
+const {HOST, PORT} = require('./conf/env')
 const bodyParser = require('body-parser')
 const app = require('express')()
+const {router} = require('./routes/core')
 app.use(bodyParser.json({
     limit: '50mb'
 }))
 
-app.route('/submit')
-    .post((req, res) => {
-        console.log(JSON.stringify(req.body))
-        res.send(JSON.stringify(req.body))
-    })
+app.use(router)
 
 app.listen(PORT, HOST, () => console.log(`listening on ${process.env.PORT}`))
