@@ -8,4 +8,4 @@ app.use(bodyParser.json({
 
 app.use(router)
 
-app.listen(PORT, HOST, () => console.log(`listening on ${process.env.PORT}`))
+app.listen(PORT, HOST, () => console.log(`listening on ${PORT}`))
