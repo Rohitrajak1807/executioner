@@ -21,3 +21,8 @@ exports.successResponse = (data) => {
         data: data
     }
 }
+
+exports.jobState = {
+    waiting: 'waiting',
+    finished: 'finished'
+}
