@@ -10,11 +10,12 @@ router.post('/submit', async (req, res) => {
     try {
         const data = {
             src: req.body.src,
-            stdin: req.body.input,
+            stdin: req.body.input || '',
             lang: req.body.lang,
             id: newRandomUid(),
             state: jobState.waiting
         }
+        console.log(data.stdin)
         const response = await axios.post(`http://${RUNNER_HOST}:${RUNNER_PORT}/run`, data)
         console.log(`status: ${response.status}, config.data: ${response.config.data}, data: ${response.data}`)
         const dbResponse = await Job.create(data)

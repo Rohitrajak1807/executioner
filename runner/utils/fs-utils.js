@@ -1,10 +1,15 @@
 const fs = require('fs')
-const os = require('os')
 const path = require('path')
 
-const BASE_DIR = os.tmpdir()
+exports.mkDir = (pathSpec) => fs.promises.mkdir(pathSpec)
 
-exports.mkdir = function (id) {
-    const pathSpec = path.join(BASE_DIR, id)
-    return fs.promises.mkdir(pathSpec)
+exports.writeFile = (dir, fileName, content) => fs.promises.writeFile(path.join(dir, fileName), content)
+
+exports.readFile = (pathSpec) => fs.promises.readFile(pathSpec, 'utf-8')
+
+exports.rmDir = (pathSpec) => fs.promises.rmdir(pathSpec, {recursive: true})
+
+exports.readResults = async (dir, outputFile) => {
+    const path = path.join(dir, outputFile)
+    return fs.promises.readFile(path, 'utf-8')
 }
