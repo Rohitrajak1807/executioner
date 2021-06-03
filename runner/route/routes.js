@@ -5,13 +5,12 @@ const os = require('os')
 const path = require('path')
 const {lang} = require('../utils/lang')
 const BASE_DIR = os.tmpdir()
-const {mkDir, writeFile, readFile} = require('../utils/fs-utils')
+const {mkDir, writeFile, readFile, rmDir} = require('../utils/fs-utils')
 
 router.post('/run', async (req, res) => {
     const data = req.body
     console.log(data.src, data.stdin, data.lang, data.id)
     res.send(`I got this.`)
-    // now we write files and run the code
     const dir = path.join(BASE_DIR, data.id)
     const srcFile = `src.${lang[data.lang]}`
     const inputFile = `input.txt`
@@ -23,19 +22,20 @@ router.post('/run', async (req, res) => {
             writeFile(dir, inputFile, data.stdin.toString()),
             run(runCmd)
         ])
-        const data = await readFile(path.join(dir, outputFile))
+        const outData = await readFile(path.join(dir, outputFile))
         const result = {
-            output: data,
-            stderr: data.stderr,
-            status: data.stdout
+            output: outData,
+            stderr: outData.stderr,
+            status: outData.stdout
         }
+        console.log(result)
+        const filter = {id: data.id}
+        const update = {state: jobState.finished, output: result.output, stderr: result.stderr}
+        await Job.findOneAndUpdate(filter, update)
+        await rmDir(dir)
     } catch (e) {
         console.log(e)
     }
-    // mark as done
-    const filter = {id: data.id}
-    const update = {state: jobState.finished}
-    await Job.findOneAndUpdate(filter, update)
 })
 
 exports.router = router

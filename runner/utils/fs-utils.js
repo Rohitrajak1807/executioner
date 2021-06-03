@@ -7,7 +7,7 @@ exports.writeFile = (dir, fileName, content) => fs.promises.writeFile(path.join(
 
 exports.readFile = (pathSpec) => fs.promises.readFile(pathSpec, 'utf-8')
 
-exports.rmDir = (pathSpec) => fs.promises.rmdir(pathSpec, {recursive: true})
+exports.rmDir = (pathSpec) => fs.promises.rm(pathSpec, {recursive: true})
 
 exports.readResults = async (dir, outputFile) => {
     const path = path.join(dir, outputFile)

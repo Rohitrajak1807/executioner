@@ -15,16 +15,24 @@ router.post('/submit', async (req, res) => {
             id: newRandomUid(),
             state: jobState.waiting
         }
-        console.log(data.stdin)
-        const response = await axios.post(`http://${RUNNER_HOST}:${RUNNER_PORT}/run`, data)
-        console.log(`status: ${response.status}, config.data: ${response.config.data}, data: ${response.data}`)
+        console.log(process.env.DB_URI)
         const dbResponse = await Job.create(data)
         console.log(`${dbResponse.id} created`)
         res.status(202).send(`http://${HOST}:${PORT}/result/${data.id}`)
+        await axios.post(`http://${RUNNER_HOST}:${RUNNER_PORT}/run`, data)
+
     } catch (e) {
         console.log(e)
         res.status(500).send(errorResponse(e.code, e.message))
     }
+})
+
+router.get('/result/:id', async (req, res) => {
+    const data = await Job.findOne({id: req.params.id}, {
+        _id: 0,
+        __v: 0
+    })
+    res.status(200).send(data)
 })
 
 exports.router = router
